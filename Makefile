@@ -4,8 +4,8 @@ all: main.exe
 main.exe: main.o libeduhistogram.a
 	g++ main.o libeduhistogram.a -o ./main.exe
 
-libeduhistogram.a: histogram1d.o histogram2d.o
-	ar -crs libeduhistogram.a histogram1d.o histogram2d.o
+libeduhistogram.a: histogram1d.o histogram2d.o accept-reject-1d.o
+	ar -crs libeduhistogram.a histogram1d.o histogram2d.o accept-reject-1d.o
 
 main.o: main.cc
 	g++ -Iinclude -c main.cc -o main.o
@@ -15,6 +15,9 @@ histogram1d.o: src/histogram1d.cc
 
 histogram2d.o: src/histogram2d.cc
 	g++ -Iinclude -c src/histogram2d.cc -o histogram2d.o
+
+accept-reject-1d.o: src/accept-reject-1d.cc
+	g++ -Iinclude -c src/accept-reject-1d.cc -o accept-reject-1d.o
 
 clean:
 	rm -f *.o
