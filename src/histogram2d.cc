@@ -22,12 +22,17 @@ Histogram2D::~Histogram2D() {
     delete [] counters;
 }
 
+int
+Histogram2D::_get_offset(int nBinX, int nBinY) {
+    return nBinX + nBinY*nBinsX;
+}
+
 void
 Histogram2D::fill(float x, float y) {
     int nBinX = (x - aX)/binWidthX;
     int nBinY = (y - aY)/binWidthY;
 
-    int offset = nBinX + nBinY*nBinsX;
+    int offset = _get_offset(nBinX, nBinY);
     //printf("x=%e, y=%e, ix=%d, iy=%d, offset=%d\n"
     //        , x, y, nBinX, nBinY, offset
     //        );
@@ -36,13 +41,13 @@ Histogram2D::fill(float x, float y) {
 }
 
 void
-Histogram2D::dump() {
+Histogram2D::dump(FILE * outFile) {
     for(int nBinX = 0; nBinX < nBinsX; ++nBinX) {
         for(int nBinY = 0; nBinY < nBinsY; ++nBinY) {
-            int offset = nBinX + nBinY*nBinsX;
-            printf("%5d", counters[offset]);
+            int offset = _get_offset(nBinX, nBinY);
+            fprintf(outFile, "%5d", counters[offset]);
         }
-        printf("\n");
+        fprintf(outFile, "\n");
     }
 }
 

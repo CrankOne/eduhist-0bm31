@@ -26,9 +26,9 @@ Histogram1D::fill(float x) {
 }
 
 void
-Histogram1D::dump() {
+Histogram1D::dump(FILE * outFile) {
     for(int i = 0; i < nBins; ++i) {
-        printf("%3d %f %f %d\n", i
+        fprintf(outFile, "%3d %f %f %d\n", i
                 , i*binWidth
                 , (i+1)*binWidth
                 , counters[i]);

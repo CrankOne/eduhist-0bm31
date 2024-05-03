@@ -27,7 +27,9 @@ int main(int argc, char * argv[]) {
         h.fill(x, y);
     }
 
-    h.dump();
+    FILE * outFile = fopen("points.dat", "w");
+    h.dump(outFile);
+    fclose(outFile);
 
     return 0;
 }

@@ -11,7 +11,7 @@ public:
     Histogram1D(float a_, float b_, int nBins_);
     ~Histogram1D();
     void fill(float x);
-    void dump();
+    void dump(FILE *);
 };
 
 

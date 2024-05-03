@@ -10,11 +10,13 @@ private:
     int nBinsY;  // ..., Y
     float binWidthX;  // (cache) width of a single bin (sub-range)
     float binWidthY;  // ...
+
+    int _get_offset(int nBinx, int nBinY);
 public:
     Histogram2D( float aX, float bX
                , float aY, float bY
                , int nBinsX, int nBinsY );
     ~Histogram2D();
     void fill(float x, float y);
-    void dump();
+    void dump(FILE *);
 };
