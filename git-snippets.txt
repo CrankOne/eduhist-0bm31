@@ -1,0 +1,9 @@
+
+Update project wrt recent changes on remote:
+
+    $ git pull
+
+Check current modifications in project:
+
+    $ git status
+
