@@ -1,13 +1,33 @@
 
-typedef float (*PDFCallback_t)(float);
+typedef float (*Callback_t)(float);
 
-class AcceptRejectGenerator {
-private:
+class Generator {
+protected:
     float a, b;
-    float maxValue;
-    PDFCallback_t pdf;
 public:
-    AcceptRejectGenerator(float a, float b, float maxValue, PDFCallback_t pdf);
-    float draw();
+    Generator(float a_, float b_);
+    virtual float draw() = 0;
+
+    float get_a() const { return a; }
+    float get_b() const { return b; }
+};
+
+class AcceptRejectGenerator : public Generator {
+private:
+    float maxValue;
+    Callback_t pdf;
+public:
+    AcceptRejectGenerator(float a_, float b_
+            , float maxValue_, Callback_t pdf_);
+    float draw() override;
+};
+
+class InvertedFunctionGenerator : public Generator {
+private:
+    Callback_t invF;
+public:
+    InvertedFunctionGenerator(float a_, float b_
+            , Callback_t invF_);
+    float draw() override;
 };
 

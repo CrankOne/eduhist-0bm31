@@ -6,21 +6,32 @@
 
 #include "accept-reject-1d.hh"
 
-// entrypoint
+#include <cmath>
 
 // inteval 0-1
 float pdf(float x) {
     return 1 - x; 
 }
 
+// inverted \int_{0}^{x} sin(pi x)                                                  
+float inv_cdf(float u) {                                                            
+    return acos(1 - 2*u)/M_PI;                                                      
+}
+
+void fill_histogram_with_generator(Histogram1D * h, Generator * G, int nEvents) {
+    for(int i = 0; i < nEvents; ++i) {
+        float x = G->draw();
+        h->fill(x);
+    }
+}
+
 int main(int argc, char * argv[]) {
     Histogram1D h(0, 1, 40);
-    AcceptRejectGenerator gen(0, 1, 1, pdf);
 
-    for(int i = 0; i < 1e4; ++i) {
-        float x = gen.draw();
-        h.fill(x);
-    }
+    //AcceptRejectGenerator gen(0, 1, 1, pdf);
+    InvertedFunctionGenerator gen(0, 1, inv_cdf);
+
+    fill_histogram_with_generator(&h, &gen, 1e5);
 
     //Histogram2D h( -50., 50
     //             , -5, 5
