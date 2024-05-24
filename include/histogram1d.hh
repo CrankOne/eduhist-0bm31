@@ -1,3 +1,5 @@
+#pragma once
+
 // declaration
 
 class Histogram1D {

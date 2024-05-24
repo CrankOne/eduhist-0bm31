@@ -1,3 +1,5 @@
+#pragma once
+
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
@@ -12,11 +14,6 @@ public:
     ~DetectorConstruction() override = default;
 
     G4VPhysicalVolume* Construct() override;
-
-    G4LogicalVolume* GetScoringVolume() const { return fScoringVolume; }
-
-protected:
-    G4LogicalVolume* fScoringVolume = nullptr;
 };
 
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
 #include "globals.hh"

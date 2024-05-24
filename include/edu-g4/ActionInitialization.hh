@@ -1,3 +1,5 @@
+#pragma once
+
 #include "G4VUserActionInitialization.hh"
 
 namespace edu0bm31 {

@@ -1,9 +1,11 @@
+#pragma once
 
 typedef float (*Callback_t)(float);
 
 class Generator {
 protected:
-    float a, b;
+    float a;
+    float b;
 public:
     Generator(float a_, float b_);
     virtual float draw() = 0;
@@ -29,5 +31,12 @@ public:
     InvertedFunctionGenerator(float a_, float b_
             , Callback_t invF_);
     float draw() override;
+};
+
+class MajoredGenerator : public AcceptRejectGenerator {
+    // ...
+public:
+    float draw() override;
+    // ...
 };
 

@@ -1,3 +1,4 @@
+#pragma once
 
 class Histogram2D {
 private:
