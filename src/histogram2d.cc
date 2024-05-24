@@ -1,6 +1,7 @@
 #include <cstdio>
 
 #include "histogram2d.hh"
+#include "histogram1d.hh"
 
 // implementation
 

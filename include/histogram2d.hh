@@ -1,5 +1,7 @@
 #pragma once
 
+#include "histogram1d.hh"
+
 class Histogram2D {
 private:
     float aX;  // left axis range X
@@ -21,3 +23,4 @@ public:
     void fill(float x, float y);
     void dump(FILE *);
 };
+

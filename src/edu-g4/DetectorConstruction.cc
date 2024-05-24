@@ -26,7 +26,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
             worldDims[0]/2, worldDims[1]/2, worldDims[2]/2);  // its size
     auto logicWorld = new G4LogicalVolume(solidWorld,  // its solid
             nist->FindOrBuildMaterial("G4_AIR"),     // its material
-            "World");                                        // its name
+            "World");                                // its name
     auto physWorld = new G4PVPlacement(nullptr,  // no rotation
         G4ThreeVector(),                           // at (0,0,0)
         logicWorld,                                // its logical volume
@@ -36,12 +36,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
         0,                                         // copy number
         checkOverlaps );                           // overlaps checking
 
+    //
+    // User geometry
 
     auto solidCalo = new G4Box("Calo", 12.5*cm, 12.5*cm, 25*cm);
     auto logicCalo = new G4LogicalVolume(solidCalo
             , nist->FindOrBuildMaterial("G4_CESIUM_IODIDE"), "Calo");
-    auto physCalo = new G4PVPlacement(nullptr, G4ThreeVector(), logicCalo,
-            "Calo", logicWorld, false, 0, checkOverlaps);
+    auto physCalo = new G4PVPlacement(nullptr
+            , G4ThreeVector(0, 0, -.5*m)
+            , logicCalo
+            , "Calo", logicWorld, false, 0, checkOverlaps);
 
     return physWorld;
 }

@@ -16,4 +16,3 @@ public:
     void dump(FILE *);
 };
 
-
