@@ -21,11 +21,11 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String particleName;
   G4ParticleDefinition* particle
-    = particleTable->FindParticle(particleName="e-");
+    = particleTable->FindParticle(particleName="pi+");
   assert(particle);  // XXX
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-  fParticleGun->SetParticleEnergy(300.*MeV);
+  fParticleGun->SetParticleEnergy(30.*MeV);
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()

@@ -27,7 +27,16 @@
 /vis/viewer/set/autoRefresh true
 /vis/viewer/refresh
 /vis/verbose warnings
-/vis/viewer/set/projection p
-/vis/viewer/refresh
-/run/beamOn 1
+/vis/geometry/set/visibility World 0 true
+/vis/scene/notifyHandlers
+/vis/geometry/set/forceWireframe World 0 true
+/vis/scene/notifyHandlers
+/vis/geometry/set/visibility CaloCell 0 false
+/vis/scene/notifyHandlers
+/vis/geometry/set/visibility CaloCellConverter -1 true
+/vis/scene/notifyHandlers
+/vis/geometry/set/visibility CaloCellScintillator -1 true
+/vis/scene/notifyHandlers
+/vis/geometry/set/colour CaloCellConverter 0 0.603 0.200 0.450
+/vis/scene/notifyHandlers
 /run/beamOn 100

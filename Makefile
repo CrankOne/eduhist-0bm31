@@ -2,21 +2,21 @@
 # 	$@ -- target name
 # 	$^ -- list of dependencies
 
-CXXFLAGS=$(shell geant4-config --cflags) -Iinclude
+CXXFLAGS=$(shell geant4-config --cflags) -Iinclude -g -ggdb
 
 all: main.exe geant4-app
 
 main.exe: main.o libeduhistogram.a
-	g++ $^ -o $@
+	g++ -g -ggdb $^ -o $@
 
 libeduhistogram.a: histogram1d.o histogram2d.o accept-reject-1d.o sphere-uniform.o
 	ar -crs $@ $^
 
 main.o: main.cc
-	g++ -Iinclude -c main.cc -o $@
+	g++ -g -ggdb -Iinclude -c main.cc -o $@
 
 %.o: src/%.cc
-	g++ -Iinclude -c $^ -o $@
+	g++ -g -ggdb -Iinclude -c $^ -o $@
 
 #
 # Geant4-specific
@@ -37,7 +37,7 @@ obj/main-g4.o: main-g4.cc
 # 	- has couple of shell commands embedded to substitute output for
 # 	  compile options
 # 	- has special option to specify runtime library search path
-geant4-app: obj/ActionInitialization.o obj/DetectorConstruction.o obj/PrimaryGeneratorAction.o obj/main-g4.o
+geant4-app: obj/ActionInitialization.o obj/DetectorConstruction.o obj/PrimaryGeneratorAction.o obj/SensitiveDetector.o obj/main-g4.o
 	g++ $^ $(shell geant4-config --libs) -o $@ -Wl,--disable-new-dtags,-rpath=$(shell geant4-config --prefix)/lib
 
 # Virtual target to clean directories
