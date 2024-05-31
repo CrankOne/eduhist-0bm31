@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cassert>
 
 #include "histogram1d.hh"
 
@@ -8,7 +9,7 @@ Histogram1D::Histogram1D(float a_, float b_, int nBins_) {
     a = a_;
     b = b_;
     nBins = nBins_;
-    binWidth = (b - a)/nBins;
+    binWidth = (b - a)/(nBins);
     counters = new int [nBins_];
     for(int i = 0; i < nBins_; ++i) {
         counters[i] = 0;
@@ -21,7 +22,10 @@ Histogram1D::~Histogram1D() {
 
 void
 Histogram1D::fill(float x) {
+    if(x < a)  return;
+    if(x >= b) return;
     int nBin = (x - a)/binWidth;
+    assert(nBin < nBins);
     ++counters[nBin];
 }
 

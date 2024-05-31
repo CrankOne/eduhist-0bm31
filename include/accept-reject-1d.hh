@@ -26,10 +26,13 @@ public:
 
 class InvertedFunctionGenerator : public Generator {
 private:
-    Callback_t invF;
+    Callback_t invF, cdf;
+    float a_u, b_u;
 public:
     InvertedFunctionGenerator(float a_, float b_
-            , Callback_t invF_);
+            , Callback_t cdf_
+            , Callback_t invF_
+            );
     float draw() override;
 };
 

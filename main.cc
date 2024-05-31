@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <cassert>
 
 #include "histogram1d.hh"
 #include "histogram2d.hh"
@@ -10,12 +11,16 @@
 
 // inteval 0-1
 float pdf(float x) {
-    return 1 - x; 
+    return cos(x)/1.89797;
+}
+
+float cdf(float x) {
+    return 0.526879 * (0.948985 + sin(x));
 }
 
 // inverted \int_{0}^{x} sin(pi x)                                                  
 float inv_cdf(float u) {                                                            
-    return acos(1 - 2*u)/M_PI;                                                      
+    return - asin(0.9489846193555862 - 1.8979692387111724*u);
 }
 
 void fill_histogram_with_generator(Histogram1D * h, Generator * G, int nEvents) {
@@ -26,10 +31,10 @@ void fill_histogram_with_generator(Histogram1D * h, Generator * G, int nEvents) 
 }
 
 int main(int argc, char * argv[]) {
-    Histogram1D h(0, 1, 40);
+    Histogram1D h(-5, 5, 40);
 
     //AcceptRejectGenerator gen(0, 1, 1, pdf);
-    InvertedFunctionGenerator gen(0, 1, inv_cdf);
+    InvertedFunctionGenerator gen(-1.25, 1.25, cdf, inv_cdf);
 
     fill_histogram_with_generator(&h, &gen, 1e5);
 
@@ -45,6 +50,7 @@ int main(int argc, char * argv[]) {
     //}
 
     FILE * outFile = fopen("points.dat", "w");
+    assert(outFile);
     h.dump(outFile);
     fclose(outFile);
 

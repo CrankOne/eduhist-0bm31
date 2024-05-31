@@ -24,16 +24,20 @@ AcceptRejectGenerator::draw() {
 
 
 InvertedFunctionGenerator::InvertedFunctionGenerator(float a_, float b_
+            , Callback_t cdf_
             , Callback_t invF_)
     : Generator(a_, b_)
 {
+    cdf = cdf_;
     invF = invF_;
+    a_u = cdf(a_);
+    b_u = cdf(b_);
 }
 
 float
 InvertedFunctionGenerator::draw() {
     // TODO: account for a and b (definition range)
-    float u = rand()*1./RAND_MAX;
+    float u = a_u + (b_u - a_u)*(1.*rand()/RAND_MAX);
     return invF(u);
 }
 
