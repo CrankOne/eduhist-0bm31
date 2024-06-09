@@ -5,3 +5,5 @@ libeduhistogram.a
 main.exe
 main.o
 points.dat
+obj/*.o
+*.o
