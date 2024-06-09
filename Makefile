@@ -2,7 +2,7 @@
 # 	$@ -- target name
 # 	$^ -- list of dependencies
 
-CXXFLAGS=$(shell geant4-config --cflags) -Iinclude -g -ggdb
+CXXFLAGS=-DQT_NO_VERSION_TAGGING -fPIC $(shell geant4-config --cflags) -Iinclude -g -ggdb
 
 all: main.exe geant4-app
 

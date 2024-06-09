@@ -21,7 +21,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String particleName;
   G4ParticleDefinition* particle
-    = particleTable->FindParticle(particleName="pi+");
+    = particleTable->FindParticle(particleName="e-");
   assert(particle);  // XXX
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
@@ -36,7 +36,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
     G4double x0 = 0;  //;size * envSizeXY * (G4UniformRand()-0.5);
     G4double y0 = 0;  //size * envSizeXY * (G4UniformRand()-0.5);
-    G4double z0 = -1.5 * m;
+    G4double z0 = .5 * m;
 
     fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
 

@@ -11,7 +11,7 @@ public:
 
     // methods from base class
     void   Initialize(G4HCofThisEvent* hitCollection) override;
-    G4bool ProcessHits(G4Step* step, G4TouchableHistory* history) override;
+    G4bool ProcessHits( G4Step * step, G4TouchableHistory* history ) override;
     void   EndOfEvent(G4HCofThisEvent* hitCollection) override;
 };
 

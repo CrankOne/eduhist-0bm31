@@ -17,7 +17,13 @@ SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory* history) {
     // energy deposit
     auto edep = step->GetTotalEnergyDeposit();
 
-    std::cout << "XXX energy deposition: " << edep << std::endl;  // XXX
+    // Get (1st level) replica number
+    auto touchable = (step->GetPreStepPoint()->GetTouchable());
+    auto yLayerNumber = touchable->GetReplicaNumber(1);
+    auto xLayerNumber = touchable->GetReplicaNumber(0);
+
+
+    printf("XXX energy deposition: %e at %d, %d\n", edep, xLayerNumber, yLayerNumber);
 
     #if 0
     // step length

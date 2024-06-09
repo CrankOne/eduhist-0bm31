@@ -12,31 +12,74 @@
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4SDManager.hh"
+#include "G4PVReplica.hh"
 
 #include "edu-g4/SensitiveDetector.hh"
 
 namespace edu0bm31 {
 
 G4LogicalVolume *
-DetectorConstruction::ConstructHomoCell() {
+HomogeneousCalo::_construct_cell() {
     G4NistManager * nist = G4NistManager::Instance();
 
-    auto solidCalo = new G4Box("Calo", 2.5*cm, 2.5*cm, 25*cm);
-    auto logicCalo = new G4LogicalVolume(solidCalo
-            , nist->FindOrBuildMaterial("G4_CESIUM_IODIDE"), "Calo");
-    return logicCalo;
+    auto solidCell = new G4Box("homoCell", cellSizeX/2, cellSizeY/2, cellDepth/2);
+    auto logicCell = new G4LogicalVolume(solidCell
+            , nist->FindOrBuildMaterial("G4_CESIUM_IODIDE"), "homoCell");
+    return logicCell;
 }
 
 G4LogicalVolume *
+HomogeneousCalo::_construct_layer_x() {
+    G4NistManager * nist = G4NistManager::Instance();
+
+    auto cell = _construct_cell();
+
+    auto solidLayerX = new G4Box("homoLayerX", nCellsX*cellSizeX/2, cellSizeY/2, cellDepth/2);
+    auto logicLayerX = new G4LogicalVolume(solidLayerX
+            , nist->FindOrBuildMaterial("G4_AIR"), "homoLayerX");
+
+    new G4PVReplica(                               
+                   "homoLayerX",     // its name
+                   cell,             // its logical volume
+                   logicLayerX,      // its mother
+                   kXAxis,           // axis of replication
+                   nCellsX,          // number of replica
+                   cellSizeX);       // witdth of replica
+
+    return logicLayerX;
+}
+
+G4LogicalVolume *
+HomogeneousCalo::construct_calo() {
+    G4NistManager * nist = G4NistManager::Instance();
+
+    auto layerX = _construct_layer_x();
+
+    auto solidLayerY = new G4Box("homoLayerY", nCellsX*cellSizeX/2, nCellsY*cellSizeY/2, cellDepth/2);
+    auto logicLayerY = new G4LogicalVolume(solidLayerY
+            , nist->FindOrBuildMaterial("G4_AIR"), "homoLayerY");
+
+    new G4PVReplica(                               
+                   "homoLayerX",     // its name
+                   layerX,             // its logical volume
+                   logicLayerY,      // its mother
+                   kYAxis,           // axis of replication
+                   nCellsY,          // number of replica
+                   cellSizeY);       // witdth of replica
+
+    return logicLayerY;
+}
+
+#if 0
+G4LogicalVolume *
 DetectorConstruction::ConstructHeteroCell() {
-    float cellSize[2] = { 12.5*cm, 12.5*cm }
-        , converterThickness = 0.35*mm
-        , scintillatorThickness = 0.15*mm
+    float cellSize[2] = { cellSizeX, cellSizeY }
+        , converterThickness = cnvThickness
+        , scintillatorThickness = scintThickness
         ;
 
     // Get nist material manager
     G4NistManager * nist = G4NistManager::Instance();
-    assert(nist->FindOrBuildMaterial("G4_Pb"));  // XXX
 
     // create logic for cell encompassing converter and scintillator
     auto solidCell = new G4Box("CaloCell"
@@ -78,6 +121,22 @@ DetectorConstruction::ConstructHeteroCell() {
     return logicCell;
 }
 
+G4LogicalVolume *
+DetectorConstruction::ConstructXLayer() {
+    #if 0
+    float depth;
+    if(isHomogeneous)
+        depth = homoCellThickness*cellDepth;
+
+    auto solidXLayer = new G4Box("caloLayerX",
+            worldDims[0]/2, worldDims[1]/2, worldDims[2]/2);  // its size
+    auto logicXLayer = new G4LogicalVolume(solidWorld,  // its solid
+            nist->FindOrBuildMaterial("G4_AIR"),     // its material
+            "World");                                // its name
+    #endif
+}
+#endif
+
 G4VPhysicalVolume *
 DetectorConstruction::Construct() {
     // Get nist material manager
@@ -103,11 +162,20 @@ DetectorConstruction::Construct() {
 
     //
     // User geometry
-    G4LogicalVolume * logicCalo = ConstructHeteroCell();
+    //auto calo = new HomogeneousCalo(25*cm, 15*cm, 15*cm, 5, 3);  // TODO
+    //G4LogicalVolume * logicCalo = calo->construct_calo();
 
-    auto physCalo = new G4PVPlacement(nullptr
+    //auto physCalo = new G4PVPlacement(nullptr
+    //        , G4ThreeVector(0, 0, 1*m)
+    //        , logicCalo
+    //        , "Calo", logicWorld, false, 0, checkOverlaps);
+
+    auto solidPhantom = new G4Box("phantom", 1*m/2, 1*m/2, 1*m/2);
+    auto logicPhantom = new G4LogicalVolume(solidPhantom
+            , nist->FindOrBuildMaterial("G4_WATER"), "phantom");
+    auto physPhantom = new G4PVPlacement(nullptr
             , G4ThreeVector(0, 0, 1*m)
-            , logicCalo
+            , logicPhantom
             , "Calo", logicWorld, false, 0, checkOverlaps);
 
     return physWorld;
@@ -116,8 +184,11 @@ DetectorConstruction::Construct() {
 void
 DetectorConstruction::ConstructSDandField() {
     auto absoSD = new SensitiveDetector("CaloSD");
+    // not obvious, but necessary (binding newly created sensitive
+    // detector instance with Geant4 API)
     G4SDManager::GetSDMpointer()->AddNewDetector(absoSD);
-    SetSensitiveDetector("CaloCellScintillator",absoSD);
+
+    SetSensitiveDetector("phantom", absoSD);  // CAVEAT: logic volume name
 }
 
 }
