@@ -1,9 +1,12 @@
 #include "edu-g4/SensitiveDetector.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
 
 namespace edu0bm31 {
 
 SensitiveDetector::SensitiveDetector(const G4String& name)
-        : G4VSensitiveDetector(name) {
+        : G4VSensitiveDetector(name)
+        , _primaryParticleLosses(0, 300, 0, 300, 300, 300)
+        {
 }
 
 SensitiveDetector::~SensitiveDetector() {}
@@ -14,16 +17,36 @@ SensitiveDetector::Initialize(G4HCofThisEvent* hitCollection) {
 
 G4bool
 SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory* history) {
-    // energy deposit
+    // total energy deposit
     auto edep = step->GetTotalEnergyDeposit();
+    // energy deposit caused by ionization (without radiative/synchrotron
+    // radiation in magnetic should match total deposit)
+    double ioniziationLoss = step->GetTotalEnergyDeposit()
+                           - step->GetNonIonizingEnergyDeposit();
+    if(!step->GetTrack()->GetParentID()) {  // if this is a primary particle
+        // calculate dE/dx within a step
+        double dEdx = (ioniziationLoss / CLHEP::MeV) / (step->GetStepLength() / CLHEP::cm);
+        // get own energy of the particle (as mean of pre- and post- step points)
+        double ownE = ( step->GetPreStepPoint()->GetKineticEnergy()
+                      + step->GetPostStepPoint()->GetKineticEnergy()
+                      ) / 2;
+        ownE /= CLHEP::MeV;
+        // add mean particle edenrgy (MeV) wrt energy deposition in MeV/cm
+        _primaryParticleLosses.fill(ownE, dEdx);
+        printf("XXX primary particle energy deposition: %e (%.3e MeV, non-ionizing %.3e MeV)"
+                ", particle energy = %.3e MeV\n"
+                , edep, edep/CLHEP::MeV, (edep - ioniziationLoss)/CLHEP::MeV
+                , step->GetTrack()->GetDynamicParticle()->GetKineticEnergy()/CLHEP::MeV
+                );
+        //step->GetTrack()->GetParentID()
+    }
 
     // Get (1st level) replica number
     auto touchable = (step->GetPreStepPoint()->GetTouchable());
     auto yLayerNumber = touchable->GetReplicaNumber(1);
     auto xLayerNumber = touchable->GetReplicaNumber(0);
 
-
-    printf("XXX energy deposition: %e at %d, %d\n", edep, xLayerNumber, yLayerNumber);
+    //printf("XXX energy deposition: %e at %d, %d\n", edep, xLayerNumber, yLayerNumber);
 
     #if 0
     // step length
@@ -41,6 +64,10 @@ SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory* history) {
 
 void
 SensitiveDetector::EndOfEvent(G4HCofThisEvent* hitCollection) {
+    // open file, dump histogram, close file
+    FILE * meanLossesFile = fopen("./meanLosses.dat", "w");
+    _primaryParticleLosses.dump(meanLossesFile);
+    fclose(meanLossesFile);
 }
 
 }
