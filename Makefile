@@ -37,7 +37,7 @@ obj/main-g4.o: main-g4.cc
 # 	- has couple of shell commands embedded to substitute output for
 # 	  compile options
 # 	- has special option to specify runtime library search path
-geant4-app: obj/ActionInitialization.o obj/DetectorConstruction.o obj/PrimaryGeneratorAction.o obj/SensitiveDetector.o obj/main-g4.o
+geant4-app: obj/ActionInitialization.o obj/DetectorConstruction.o obj/PrimaryGeneratorAction.o obj/SensitiveDetector.o obj/main-g4.o ./libeduhistogram.a
 	g++ $^ $(shell geant4-config --libs) -o $@ -Wl,--disable-new-dtags,-rpath=$(shell geant4-config --prefix)/lib
 
 # Virtual target to clean directories

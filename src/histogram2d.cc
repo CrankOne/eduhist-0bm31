@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cassert>
 
 #include "histogram2d.hh"
 #include "histogram1d.hh"
@@ -32,8 +33,13 @@ void
 Histogram2D::fill(float x, float y) {
     int nBinX = (x - aX)/binWidthX;
     int nBinY = (y - aY)/binWidthY;
+    if(nBinX <  0) return;  // underflow
+    if(nBinX >= nBinsX) return;  // overflow
+    if(nBinY <  0) return;  // underflow
+    if(nBinY >= nBinsY) return;  // overflow
 
     int offset = _get_offset(nBinX, nBinY);
+    assert(offset < nBinsX*nBinsY);
     //printf("x=%e, y=%e, ix=%d, iy=%d, offset=%d\n"
     //        , x, y, nBinX, nBinY, offset
     //        );
@@ -43,8 +49,8 @@ Histogram2D::fill(float x, float y) {
 
 void
 Histogram2D::dump(FILE * outFile) {
-    for(int nBinX = 0; nBinX < nBinsX; ++nBinX) {
-        for(int nBinY = 0; nBinY < nBinsY; ++nBinY) {
+    for(int nBinY = 0; nBinY < nBinsY; ++nBinY) {
+        for(int nBinX = 0; nBinX < nBinsX; ++nBinX) {
             int offset = _get_offset(nBinX, nBinY);
             fprintf(outFile, "%5d", counters[offset]);
         }
